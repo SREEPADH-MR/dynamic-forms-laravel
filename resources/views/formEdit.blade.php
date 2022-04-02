@@ -110,23 +110,30 @@
                                         <label for="field" class="form-label">HTML Field</label>
                                         <div class="col-sm-10">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="field" id="text" value="text"  @checked(old('field', $formEdit->field))>
+                                                <input class="form-check-input" type="radio" name="field" id="text" value="text" {{ ($formEdit->field=="text") ? "checked" : "" }} />
                                                 <label class="form-check-label" for="text">
                                                     Text
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="field" id="number" value="number"  @checked(old('field', $formEdit->field))>
+                                                <input class="form-check-input" type="radio" name="field" id="number" value="number" {{ ($formEdit->field=="number") ? "checked" : "" }} />
                                                 <label class="form-check-label" for="number">
                                                     Number
                                                 </label>
                                             </div>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="radio" name="field" id="select" value="select"  @checked(old('field', $formEdit->field))>
+                                                <input class="form-check-input" type="radio" name="field" id="select" value="select" {{ ($formEdit->field=="select") ? "checked" : "" }} />
                                                 <label class="form-check-label" for="select">
                                                     Select
                                                 </label>
                                             </div>
+                                            @forelse ($formEdit['options'] as $option)
+                                            <div class="col-12">
+                                                <input type="textbox" id="options" name="options[]" placeholder="{{ $option }}" value="{{ $option }}" class="form-control"><button class="remove">Remove</button>
+                                            </div>
+                                            @empty
+                                            <p></p>
+                                            @endforelse
                                             <button id="add">Add</button>
                                         </div>
                                     </div>
@@ -194,12 +201,10 @@
 
             $("#text").click(function() {
                 $('#add').hide();
-                $('#options').hide();
             });
 
             $("#number").click(function() {
                 $('#add').hide();
-                $('#options').hide();
             });
 
             $("#select").click(function() {

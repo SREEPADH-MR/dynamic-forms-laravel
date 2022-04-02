@@ -96,7 +96,7 @@
                                 <p>No Form data available, Please add form</p>
                                 @endforelse
                             </form><!-- Vertical Form -->
-
+                            <a class="btn btn-info" href="{{ route('formListTemplate') }}" role="button">Cancel</a>
                         </div>
                     </div>
                 </div>

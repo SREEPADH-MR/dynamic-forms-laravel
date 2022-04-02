@@ -69,11 +69,10 @@ class AdminController extends Controller
     
         // check admin form is valid
         $validator = $this->validateAdminForm($request);
-        dd($validator->errors());
         if ($validator->fails()) return back()->withErrors($validator)->withInput();
 
         $formData = $request->all();
-        
+
         if ($form) {
             $formUpdateResponse = tap($form)->update($formData);
 
@@ -119,7 +118,7 @@ class AdminController extends Controller
         $formData = Form::findOrFail($formId);
 
         if ($formData['options'] == null) {
-            $formData['options'] = null;
+            $formData['options'] = [];
         } else {
             $formData['options'] = explode(',', $formData['options']);
         }
