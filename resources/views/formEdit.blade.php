@@ -12,7 +12,7 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        <title>Admin Dynamic Form</title>
+        <title>Admin Dynamic Form Edit</title>
         <meta content="" name="description">
         <meta content="" name="keywords">
 
@@ -69,62 +69,78 @@
         <main id="main" class="main">
 
             <div class="pagetitle">
-                <h1>Dynamic Form</h1>
-            </div><!-- End Page Title -->
+                <h1>Edit Dynamic Form</h1>
+            </div>
+            @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+            @endif
+            @if (session('failed'))
+            <div class="alert alert-danger">
+                {{ session('failed') }}
+            </div>
+            @endif
             <section class="section">
                 <div class="row">
                     <div class="col-lg-8">
 
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Forms List</h5>
-                                <a class="btn add-user" href="{{ route('formCreateTemplate') }}" role="button"><i class="bi bi-person-plus"></i></a>
-                                @if (session('success'))
-                                <div class="alert alert-success">
-                                    {{ session('success') }}
-                                </div>
-                                @endif
-                                @if (session('failed'))
-                                <div class="alert alert-danger">
-                                    {{ session('failed') }}
-                                </div>
-                                @endif
-                                <!-- Table Users List -->
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Label</th>
-                                            <th scope="col">Sample</th>
-                                            <th scope="col">Field</th>
-                                            <th scope="col">Options</th>
-                                            <th scope="col">Comments</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($formList as $form)
-                                        <tr>
-                                            <th scope="row">{{ $form->id }}</th>
-                                            <td>{{ $form->label }}</td>
-                                            <td>{{ $form->sample }}</td>
-                                            <td>{{ $form->field }}</td>
-                                            <td>{{ $form->options }}</td>
-                                            <td>{{ $form->comments }}</td>
-                                            <td>
-                                                <form action="{{ route('formDelete', ['formId' => $form->id]) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <a class="btn" href="{{ route('formEditTemplate', ['formId' => $form->id]) }}" role="button"><i class="bi-pencil-square"></i></a>
-                                                    <button type="submit" class="btn" onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i></button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        @empty
-                                        <p>No users</p>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                                <!-- End Table with stripped rows -->
+                                <h5 class="card-title">Dynamic Form</h5>
+
+                                <!-- Vertical Form -->
+                                <form class="row g-3" method="POST" action="{{ route('formUpdate', ['formId' => $formEdit->id]) }}">
+                                    @csrf
+                                    <div class="col-12">
+                                        <label for="label" class="form-label">Label</label>
+                                        <input type="text" class="form-control @error('label') is-invalid @enderror" name="label" id="label" value="{{ $formEdit->label }}">
+                                        @error('label')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="sample" class="form-label">Sample</label>
+                                        <input type="text" class="form-control @error('sample') is-invalid @enderror" name="sample" id="sample" value="{{ $formEdit->sample }}">
+                                        @error('sample')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="field" class="form-label">HTML Field</label>
+                                        <div class="col-sm-10">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="field" id="text" value="text"  @checked(old('field', $formEdit->field))>
+                                                <label class="form-check-label" for="text">
+                                                    Text
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="field" id="number" value="number"  @checked(old('field', $formEdit->field))>
+                                                <label class="form-check-label" for="number">
+                                                    Number
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="field" id="select" value="select"  @checked(old('field', $formEdit->field))>
+                                                <label class="form-check-label" for="select">
+                                                    Select
+                                                </label>
+                                            </div>
+                                            <button id="add">Add</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="comments" class="form-label">Comments</label>
+                                        <input type="text" class="form-control" name="comments" id="comments" value="{{ $formEdit->comments }}">
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="reset" class="btn btn-secondary">Reset</button>
+                                        <a class="btn btn-info" href="{{ route('formListTemplate') }}" role="button">Cancel</a>
+                                    </div>
+                                </form><!-- Vertical Form -->
+
                             </div>
                         </div>
                     </div>
@@ -169,11 +185,40 @@
         <script src="{{ asset('admin/assets/vendor/php-email-form/validate.js') }} "></script>
 
         <script>
+            $('#add').hide();
             window.setTimeout(function() {
                 $(".alert-success").fadeTo(500, 0).slideUp(500, function() {
                     $(this).remove();
                 });
             }, 2000);
+
+            $("#text").click(function() {
+                $('#add').hide();
+                $('#options').hide();
+            });
+
+            $("#number").click(function() {
+                $('#add').hide();
+                $('#options').hide();
+            });
+
+            $("#select").click(function() {
+                $('#add').show();
+            });
+
+            $(function() {
+                $('#add').on('click', function(e) {
+                    e.preventDefault();
+                    $('<div/>').addClass('col-12')
+                        .html($('<input type="textbox" id="options" name="options[]" placeholder="Option to add custom values" />').addClass('form-control'))
+                        .append($('<button/>').addClass('remove').text('Remove'))
+                        .insertBefore(this);
+                });
+                $(document).on('click', 'button.remove', function(e) {
+                    e.preventDefault();
+                    $(this).closest('div.col-12').remove();
+                });
+            });
         </script>
 
     </body>
